@@ -1,3 +1,4 @@
+import Data.Bool
 
 gen = [3,7,9,8,5,4,2]
 
@@ -24,6 +25,11 @@ takeTo even [3,7,9,8,5,4,2]
 
 -}
 
+-- bool で書き換えたもの
+takeToB f xs = foldr (\x acc -> bool (x:acc) [x] (f x)) [] xs
+
+--
+
 takeTo' _ [] = []
 
 takeTo' f (x:xs)
@@ -42,3 +48,21 @@ takeTo' even [3,7,9,8,5,4,2]
 条件に合致する値が現れるまで蓄積する
 
 -}
+
+coll :: Int -> [Int]
+
+{-
+coll x = x : coll (f x)
+  where f = \x -> if even x then x `div` 2 else x * 3 + 1
+
+coll x = iterate f x
+  where f = \x -> if even x then x `div` 2 else x * 3 + 1
+
+coll x = iterate f x
+  where f x = bool (x * 3 + 1) (x `div` 2) (even x)
+
+coll = iterate (\x -> bool (x * 3 + 1) (x `div` 2) (even x))
+-}
+
+coll = iterate $ \x -> bool (x * 3 + 1) (x `div` 2) (even x)
+
