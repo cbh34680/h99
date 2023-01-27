@@ -1,11 +1,14 @@
-import Data.Maybe(isJust)
+import Data.List (unfoldr)
 
-gen = [('a', ('b','c')), ('b', ('d','e')), ('e', ('f','g'))]
+data Tree a = Empty | Node a (Tree a) (Tree a) deriving (Show)
 
-find t s e
-  | s == e = True
-  | otherwise = case lookup s t of
-     Nothing    -> False
-     Just (l,r) -> find t l e || find t r e
+insert :: (Num a, Ord a) => a -> (Tree a) -> (Tree a)
 
-test1 = find gen 'a' 'f'
+insert x Empty = Node x Empty Empty
+insert x (Node v l r)
+  | x == v     = Node v l r
+  | x < v      = Node v (insert x l) r
+  | otherwise  = Node v l (insert x r)
+
+
+
