@@ -1,31 +1,24 @@
 
 class IStore s where
   empty :: s
-  put :: Integer -> s -> s
-  get :: s -> Maybe (Integer, s)
+  store :: Integer -> s -> s
+  load :: s -> Maybe (Integer, s)
+
+regist :: IStore s => [Integer] -> s
+
+regist = foldr store empty
+
+load3 s1 = load s1 >>= \(x, s2) -> load s2 >>= \(y, s3) -> load s3 >>= \(z, s4) -> return [x,y,z]
 
 --
-newtype IList = IList [Integer] deriving Show
+
+newtype IList = NewIList [Integer] deriving Show
 
 instance IStore IList where
-  empty = IList []
-  put x (IList xs) = IList $ x : xs
-  get (IList []) = Nothing
-  get (IList (x:xs)) = Just (x, IList xs)
+  empty = NewIList []
+  store x (NewIList xs) = NewIList (x : xs)
+  load (NewIList []) = Nothing
+  load (NewIList (x:xs)) = Just (x, NewIList xs)
 
---
-gen :: IStore a => a
-
-gen = put 3 . put 2 . put 1 $ empty
-
---
-get3 :: IStore a => a -> Maybe [Integer]
-
-get3 s1 = case get s1 of
-  Just (x, s2) -> case get s2 of
-    Just (y, s3) -> case get s3 of
-      Just (z, _) -> Just [x, y, z]
-      Nothing -> Nothing
-    Nothing -> Nothing
-  Nothing -> Nothing
-
+registIList :: [Integer] -> IList
+registIList = foldr store empty
