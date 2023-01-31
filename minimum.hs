@@ -1,22 +1,7 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+newtype Mini a = NewMini { getMini :: a } deriving (Bounded,Eq,Ord,Show)
 
-import Data.Monoid
-import Control.Applicative
+instance (Ord a) => Semigroup (Mini a) where
+  (NewMini a) <> (NewMini b) = NewMini (min a b)
 
-newtype AppMon f m = AppMon { getAppMon :: f m }
-  deriving (Functor, Applicative)
-
-instance (Applicative f, Monoid m) => Monoid (AppMon f m) where
-  mempty = pure mempty
-  mappend = liftA2 mappend
-
-newtype Max a = Max { getMax :: a } deriving (Bounded, Eq, Ord)
-newtype Min a = Min { getMin :: a } deriving (Bounded, Eq, Ord)
-
-instance (Bounded a, Ord a) => Monoid (Max a) where
-  mempty = minBound
-  mappend = max
-
-instance (Bounded a, Ord a) => Monoid (Min a) where
-  mempty = maxBound
-  mappend = min
+instance (Ord a, Bounded a) => Monoid (Mini a) where
+  mempty = NewMini maxBound
